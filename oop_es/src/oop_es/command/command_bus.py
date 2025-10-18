@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List, Optional
 
 from oop_es.command.command import Command
 from oop_es.command.command_handler import CommandHandler
@@ -15,10 +16,14 @@ class CommandBus(ABC):
 
 
 class StandardCommandBus(CommandBus):
-    def __init__(self):
+    def __init__(self, handlers: Optional[List[CommandHandler]] = None):
+        if handlers is None:
+            handlers = []
         self.handlers = {}
         self.handling = False
         self.queue = []
+        for handler in handlers:
+            self.subscribe(handler)
 
     def subscribe(self, handler: CommandHandler):
         self.handlers[handler.command_type().__name__] = handler

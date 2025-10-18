@@ -1,0 +1,19 @@
+{
+  "services": {
+    "oop_es.store": [
+      {"class": "InMemoryEventStore", "name": "@oop_es.store.EventStore"}
+    ],
+    "oop_es.command": [
+      {"class": "StandardCommandBus", "name": "@oop_es.command.CommandBus", "aliases": ["command_bus"], "parameters": {"handlers": "#command_handlers"}}
+    ],
+    "oop_bus.event_bus": [{"class": "EventBus"}],
+    "example.wallet_repository": [
+      {"class": "WalletRepository", "name": "wallet_repository"}
+    ],
+    "example.handlers": [
+      {"class": "OpenWalletHandler", "tags": ["command_handlers"]},
+      {"class": "DepositMoneyHandler", "tags": ["command_handlers"]},
+      {"class": "WithdrawMoneyHandler", "tags": ["command_handlers"]}
+    ]
+  }
+}

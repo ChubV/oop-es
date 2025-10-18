@@ -58,6 +58,13 @@ class TestStandardCommandBus:
         assert self.mock_handler.commands == [command]
 
     @pytest.mark.asyncio
+    async def test_auto_subscribe(self):
+        command = Command()
+        self.command_bus = StandardCommandBus([self.mock_handler])
+        await self.command_bus.handle(command)
+        assert self.mock_handler.commands == [command]
+
+    @pytest.mark.asyncio
     async def test_handle_subcommand_after_processing_initiating_command_only(self):
         command = Command()
         self.command_bus.subscribe(self.mock_handler)

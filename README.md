@@ -2,7 +2,12 @@
 
 ### WARNING
 
-Still in development
+Not yet finished
+
+### What is this
+
+Just another implementation of event sourcing in Python. For now, it can handle commands, emit/save events,
+manage read models.
 
 ### Installation
 
@@ -18,4 +23,11 @@ initialization.
 
 ### Usage
 
-Check `example` folder
+Check the `example` folder
+
+### TODO
+
+- [ ] add Projector into the example to illustrate how do views (read-models) work
+- [ ] snapshotting
+- [ ] upcasting
+- [ ] better docs

@@ -18,7 +18,7 @@ test: $(ACTIVATE)
 	. $(ACTIVATE) && cd $(PKG) && pytest tests --ignore=tests/integration
 
 .PHONY: testint
-testint: $(ACTIVATE)
+testint: $(ACTIVATE) # to run integration tests for oop_es_pg
 	. $(ACTIVATE) && cd $(PKG)/tests/integration && ./test.sh
 
 .PHONY: cs
@@ -29,3 +29,8 @@ cs: $(ACTIVATE)
 .PHONY: build
 build:
 	cd $(PKG) && $(PYTHON) -m build
+
+.PHONY: run
+run: $(ACTIVATE) # to run example with `make run PKG=./example`
+	. $(ACTIVATE) && cd $(PKG) && cd src/example && $(PYTHON) run.py
+
