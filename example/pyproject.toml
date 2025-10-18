@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "oop-es-example"
 dynamic = ["version"]
 description = "OOP Event Sourcing example"
-readme = "../README.md"
 authors = [{name = "Volodymyr Chub"}]
 license = { text = "MIT" }
 
