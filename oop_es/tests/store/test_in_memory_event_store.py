@@ -23,7 +23,7 @@ class TestInMemoryEventStore:
         aggregate_id = uuid4()
         event1 = Event()
         event2 = Event()
-        await store.add(aggregate_id, [Message(event1, 0), Message(event2, 1)])
+        await store.add([Message(aggregate_id, event1, 0), Message(aggregate_id, event2, 1)])
 
         result = await store.load_events(aggregate_id)
 
@@ -36,7 +36,7 @@ class TestInMemoryEventStore:
         event1 = Event()
         event2 = Event()
         event3 = Event()
-        await store.add(aggregate_id, [Message(event1, 0), Message(event2, 1), Message(event3, 2)])
+        await store.add([Message(aggregate_id, event1, 0), Message(aggregate_id, event2, 1), Message(aggregate_id, event3, 2)])
 
         result = await store.load_events_from(aggregate_id, 1)
 
@@ -49,10 +49,10 @@ class TestInMemoryEventStore:
         event1 = Event()
         event2 = Event()
 
-        await store.add(aggregate_id, [Message(event1, 0)])
+        await store.add([Message(aggregate_id, event1, 0)])
 
         with pytest.raises(WrongEventVersionException):
-            await store.add(aggregate_id, [Message(event1, 0)])
+            await store.add([Message(aggregate_id, event1, 0)])
 
         with pytest.raises(WrongEventVersionException):
-            await store.add(aggregate_id, [Message(event2, 2)])
+            await store.add([Message(aggregate_id, event2, 2)])

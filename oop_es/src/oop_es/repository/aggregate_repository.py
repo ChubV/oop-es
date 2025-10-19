@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Type
+from typing import Generic, List, Type
 from uuid import UUID
 
-from oop_bus import EventBus
-
 from oop_es.aggregate import Aggregate
+from oop_es.exception import EventStoreException
 from oop_es.store.event_store import EventStore
+from oop_es.view.projector import Projector
 
+
+class NotFoundException(EventStoreException):
+    ...
 
 class AggregateRepository(ABC, Generic[Aggregate]):
     @abstractmethod
@@ -19,13 +22,15 @@ class AggregateRepository(ABC, Generic[Aggregate]):
 
 
 class SimpleAggregateRepository(AggregateRepository[Aggregate]):
-    def __init__(self, store: EventStore, event_bus: EventBus, aggregate_class: Type[Aggregate]):
+    def __init__(self, store: EventStore, projectors: List[Projector], aggregate_class: Type[Aggregate]):
         self.store = store
-        self.event_bus = event_bus
+        self.projectors = projectors
         self.aggregate_class = aggregate_class
 
     async def load(self, uuid: UUID) -> Aggregate:
         events = await self.store.load_events(uuid)
+        if not events:
+            raise NotFoundException("No aggregate found", {"uuid": str(uuid)})
         aggregate_class = self.aggregate_class
         aggregate: Aggregate = aggregate_class(uuid)
         aggregate.handle_all(list(events.values()))
@@ -33,12 +38,12 @@ class SimpleAggregateRepository(AggregateRepository[Aggregate]):
         return aggregate
 
     async def save(self, aggregate: Aggregate):
-        uuid = aggregate.uuid
         messages = aggregate.pop_new_messages()
 
         if not messages:
             return
 
-        await self.store.add(uuid, messages)
+        await self.store.add(messages)
         for message in messages:
-            await self.event_bus.dispatch(message.event)
+            for projector in self.projectors:
+                await projector(message)

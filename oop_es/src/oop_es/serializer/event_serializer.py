@@ -17,8 +17,8 @@ class EventSerializer(Serializer):
             class_path = data["class"]
             event_data = data["data"]
             module_path, class_name = class_path.rsplit(".", 1)
-        except (KeyError, ValueError):
-            raise ValueError("Data is not a serialized Event")
+        except (KeyError, ValueError) as exception:
+            raise ValueError("Data is not a serialized Event") from exception
 
         module = importlib.import_module(module_path)
         event_cls = getattr(module, class_name, None)

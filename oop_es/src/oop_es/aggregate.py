@@ -15,7 +15,7 @@ class AggregateRoot:
     def pop_new_messages(self) -> list[Message]:
         events = self.__events
         self.__events = {}
-        return [Message(event, version) for version, event in events.items()]
+        return [Message(self.uuid, event, version) for version, event in events.items()]
 
     def apply(self, event: Event):
         self.__events[self.__version] = event

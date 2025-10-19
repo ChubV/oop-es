@@ -9,7 +9,6 @@ description = "OOP Event Sourcing package"
 readme = "README.md"
 authors = [{name = "Volodymyr Chub"}]
 license = { text = "MIT" }
-dependencies=["oop-event-bus>=0.1.0"]
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-asyncio", "ty", "ruff"]

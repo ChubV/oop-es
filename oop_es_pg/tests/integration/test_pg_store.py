@@ -48,7 +48,7 @@ async def test_load_events(store):
     aggregate_id = uuid4()
     event1 = DummyEvent(x=1, y="abc")
     event2 = DummyEvent(x=3, y="def")
-    await store.add(aggregate_id, [Message(event1, 0), Message(event2, 1)])
+    await store.add([Message(aggregate_id, event1, 0), Message(aggregate_id, event2, 1)])
 
     result = await store.load_events(aggregate_id)
 
@@ -61,7 +61,7 @@ async def test_load_events_from(store):
     event1 = Event()
     event2 = Event()
     event3 = Event()
-    await store.add(aggregate_id, [Message(event1, 0), Message(event2, 1), Message(event3, 2)])
+    await store.add([Message(aggregate_id, event1, 0), Message(aggregate_id, event2, 1), Message(aggregate_id, event3, 2),])
 
     result = await store.load_events_from(aggregate_id, 1)
 
@@ -74,10 +74,10 @@ async def test_add_events_with_wrong_version(store):
     event1 = Event()
     event2 = Event()
 
-    await store.add(aggregate_id, [Message(event1, 0)])
+    await store.add([Message(aggregate_id, event1, 0)])
 
     with pytest.raises(WrongEventVersionException):
-        await store.add(aggregate_id, [Message(event1, 0)])
+        await store.add([Message(aggregate_id, event1, 0)])
 
     with pytest.raises(WrongEventVersionException):
-        await store.add(aggregate_id, [Message(event2, 2)])
+        await store.add([Message(aggregate_id, event2, 2)])

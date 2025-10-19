@@ -1,5 +1,3 @@
-from oop_bus import EventListener
-
-Projector = EventListener
+from .projector import Projector
 
 __all__ = ["Projector"]

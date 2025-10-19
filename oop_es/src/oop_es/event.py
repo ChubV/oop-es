@@ -1,10 +1,12 @@
 from datetime import datetime
 from typing import Any, Dict
+from uuid import UUID
 
-from oop_bus import Event as OopEvent
 
+class Event:
+    def get_name(self):
+        return self.__class__.__name__
 
-class Event(OopEvent):
     def serialize(self) -> Dict[str, Any]:
         return {key: value for key, value in self.__dict__.items() if not key.startswith("_")}
 
@@ -19,8 +21,9 @@ class Event(OopEvent):
 
 class Message:
     def __init__(
-        self, event: Event, version: int, emitted_at: datetime | None = None, meta: dict[str, Any] | None = None
+        self, aggregate_uuid: UUID, event: Event, version: int, emitted_at: datetime | None = None, meta: dict[str, Any] | None = None
     ) -> None:
+        self.uuid = aggregate_uuid
         self.event = event
         self.version = version
         self.emitted_at = emitted_at or datetime.now()

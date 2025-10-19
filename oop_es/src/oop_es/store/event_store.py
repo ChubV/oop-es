@@ -15,5 +15,5 @@ class EventStore(ABC):
         ...
 
     @abstractmethod
-    async def add(self, aggregate_id: UUID, messages: list[Message]):
+    async def add(self, messages: list[Message]):
         ...

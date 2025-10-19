@@ -39,15 +39,19 @@ class PostgresEventStore(EventStore):
         rows = await self.connector.fetch(query, str(aggregate_id), version)
         return {int(row["version"]): self.serializer.deserialize(json.loads(row["event_data"])) for row in rows}
 
-    async def add(self, aggregate_id: UUID, messages: List[Message]):
+    async def add(self, messages: List[Message]):
+        aggregate_id = None
         async with self.connector.transaction() as connection:
-            current = await self.connector.fetchval(
-                f"SELECT MAX(version) FROM {self.table} WHERE aggregate_id = $1",
-                str(aggregate_id),
-                connection=connection,
-            )
-            current = current + 1 if current is not None else 0
             for message in messages:
+                if message.uuid != aggregate_id:
+                    aggregate_id = message.uuid
+
+                    current = await self.connector.fetchval(
+                        f"SELECT MAX(version) FROM {self.table} WHERE aggregate_id = $1",
+                        str(aggregate_id),
+                        connection=connection,
+                    )
+                    current = current + 1 if current is not None else 0
                 if message.version != current:
                     raise WrongEventVersionException(f"Wrong event version {message.version}, should be {current}")
                 serialized_event = self.serializer.serialize(message.event)
@@ -67,5 +71,5 @@ class PostgresEventStore(EventStore):
                         connection=connection,
                     )
                     current += 1
-                except UniqueViolationError:
-                    raise WrongEventVersionException(f"Wrong event version {message.version}")
+                except UniqueViolationError as exception:
+                    raise WrongEventVersionException(f"Wrong event version {message.version}") from exception

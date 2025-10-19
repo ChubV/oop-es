@@ -31,3 +31,4 @@ Check the `example` folder
 - [ ] snapshotting
 - [ ] upcasting
 - [ ] better docs
+- [ ] metadata collection

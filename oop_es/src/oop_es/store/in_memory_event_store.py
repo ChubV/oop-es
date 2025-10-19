@@ -21,9 +21,9 @@ class InMemoryEventStore(EventStore):
 
         return {k: v for k, v in enumerate(events[version:], start=version)}
 
-    async def add(self, aggregate_id: UUID, messages: list[Message]):
-        saved_events = self.events[str(aggregate_id)]
+    async def add(self, messages: list[Message]):
         for message in messages:
+            saved_events = self.events[str(message.uuid)]
             if message.version != len(saved_events):
                 raise WrongEventVersionException(
                     f"Wrong event version {message.version}, should be {len(saved_events)}"
